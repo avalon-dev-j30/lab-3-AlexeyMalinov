@@ -4,20 +4,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
-/**
- * Действие, которое перемещает файлы в пределах дискового
- * пространства.
- */
-public class FileMoveAction implements Action {
+public class FileCreateLinkAction implements Action {
 
-    private Path source;
-    private Path target;
+    Path source;
+    Path link;
 
-    public FileMoveAction(String source, String target) {
+    public FileCreateLinkAction(String source, String link) {
         this.source = Paths.get(source);
-        this.target = Paths.get(target);
+        this.link = Paths.get(link);
     }
 
     /**
@@ -27,7 +22,7 @@ public class FileMoveAction implements Action {
     public void run() {
         synchronized (mutex) {
             try {
-                Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+                Files.createLink(link, source);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -36,11 +31,11 @@ public class FileMoveAction implements Action {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     @Override
     public void close() throws Exception {
         source = null;
-        target = null;
+        link = null;
     }
-
 }

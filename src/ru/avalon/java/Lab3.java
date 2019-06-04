@@ -1,8 +1,11 @@
 package ru.avalon.java;
 
+import ru.avalon.java.actions.*;
 import ru.avalon.java.console.ConsoleUI;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * Лабораторная работа №3
@@ -10,19 +13,20 @@ import java.io.IOException;
  * Курс: "Программирование на платформе Java. Разработка
  * многоуровневых приложений"
  * <p>
- * Тема: "Потоки исполнения (Threads) и многозадачность" 
+ * Тема: "Потоки исполнения (Threads) и многозадачность"
  *
  * @author Daniel Alpatov <danial.alpatov@gmail.com>
  */
 public class Lab3 extends ConsoleUI<Commands> {
     /**
      * Точка входа в приложение.
-     * 
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String[] args) {
         new Lab3().run();
     }
+
     /**
      * Конструктор класса.
      * <p>
@@ -40,22 +44,42 @@ public class Lab3 extends ConsoleUI<Commands> {
     protected void onCommand(Commands command) throws IOException {
         switch (command) {
             case copy:
-                /*
-                 * TODO №6 Обработайте команду copy
-                 */
+                new FileCopyAction(
+                        getInfoFromUser("Enter source file:"),
+                        getInfoFromUser("Enter target file:")
+                ).start();
                 break;
             case move:
-                /*
-                 * TODO №7 Обработайте команду move
-                 */
+                new FileMoveAction(
+                        getInfoFromUser("Enter source file:"),
+                        getInfoFromUser("Enter target file:")
+                ).start();
+                break;
+            case delete:
+                new FileDeleteAction(getInfoFromUser("Enter source file:")).start();
+                break;
+            case createLink:
+                new FileCreateLinkAction(
+                        getInfoFromUser("Enter source file:"),
+                        getInfoFromUser("Enter link:")
+                ).start();
                 break;
             case exit:
                 close();
                 break;
-                /*
-                 * TODO №9 Обработайте необработанные команды
-                 */
+            default:
+                System.out.println("this operation is not supported, try again");
         }
     }
-    
+
+    /**
+     * Получет занчение введенные пользователем
+     * @param message
+     * @return
+     */
+    private String getInfoFromUser(String message) {
+        System.out.println(message);
+        Scanner scanner = new Scanner(System.in);
+        return scanner.next();
+    }
 }
